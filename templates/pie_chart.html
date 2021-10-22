@@ -7,14 +7,13 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
   <script>
-
     var config = {
       type: 'bar',
       data: {
         datasets: [{
             fill: false,
-          data: {{ data|safe }},
-          backgroundColor: [
+            data: {{ data|safe }},
+            backgroundColor: [
             '#1025c7', '#b510c7', 
             '#c74d10', '#c7c110', 
             '#10c7bb','#1025c7', 
@@ -53,14 +52,13 @@
                 display: true,
                 text: 'TOTAL HALF HOURLY DATA FOR EACH HOUSE FOR THE MONTH OF DECEMBER 2018'
                 },
-                scales: {
+        scales: {
             yAxes: [{
               ticks: {
                 beginAtZero: true
               }
             }]
           }
-        
       }
     };
 
