@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div id="container" style="margin-right: auto; margin-left: auto; width: 80%;">
+    <canvas id="bar-chart"></canvas>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+  <script>
+
+    var config = {
+      type: 'bar',
+      data: {
+        datasets: [{
+            fill: false,
+          data: {{ data|safe }},
+          backgroundColor: [
+            '#1025c7', '#b510c7', 
+            '#c74d10', '#c7c110', 
+            '#10c7bb','#1025c7', 
+            '#b510c7', '#c74d10', 
+            '#c7c110', '#10c7bb',
+            '#21b52b','#6399eb',
+            '#1b00c2','#d5f49a',
+            '#992e65','#cda3e7',
+            '#00ccff ', '#ff33cc', 
+            '#ff0066', '#00ffcc', 
+            '#290066', '#ff3300', '#ffff00',
+            'rgba(255, 99, 132, 0.2)',
+              'rgba(54, 162, 235, 0.2)',
+              'rgba(255, 206, 86, 0.2)',
+              'rgba(75, 192, 192, 0.2)',
+              'rgba(153, 102, 255, 0.2)',
+              'rgba(255, 159, 64, 0.2)'
+          ],
+          borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(153, 102, 255, 1)',
+              'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1,
+          label: 'Energy consumption in Kwh'
+        }],
+        labels: {{ labels|safe }}
+      },
+
+      options: {
+        responsive: true,
+        title: {
+                display: true,
+                text: 'TOTAL HALF HOURLY DATA FOR EACH HOUSE FOR THE MONTH OF DECEMBER 2018'
+                },
+                scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
+        
+      }
+    };
+
+    window.onload = function() {
+      var ctx = document.getElementById('bar-chart').getContext('2d');
+      window.myPie = new Chart(ctx, config);
+    };
+  </script>
+{% endblock %}

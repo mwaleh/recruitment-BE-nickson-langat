@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    
+        <div class="row justify-content-center mt-5">
+          <div class="col-lg-10 col-md-8">
+    <table class="table caption-top">
+        <caption>List of buildings</caption>
+        <thead>
+          <tr>
+            <th scope="col">BULDING ID</th>
+            <th scope="col">BULDING NAME</th>
+            <th scope="col">RELATED METERS</th>
+            
+          </tr>
+        </thead>
+        <tbody>
+            {% for x in buildings %}
+          <tr>
+            <th scope="row">{{x.id}}</th>
+            <td>{{x.name}}</td>
+            <td>
+                {% for i in x.meters %}
+                <a href="">{{i.id}}</a>
+                {% endfor %}
+
+            </td>
+            
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+          </div>
+       
+    </div>
+</div>
+{% endblock %}

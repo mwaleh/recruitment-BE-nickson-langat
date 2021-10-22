@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+    <div class="row justify-content-center mt-5">
+      <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="card shadow">
+            
+          <div class="card-title text-center border-bottom">
+            <h2 class="p-3">UPLOAD CSV FILE</h2>
+          </div>
+          <div class="card-body">
+            <form action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+            <p class="text-info">{{order}}</p>
+            <br>
+                <label for="username" class="form-label">CSV FILE</label>
+                <input type="file" name="file" class="form-control" id="file" required />
+              </div>
+              <div class="d-grid">
+                <button type="submit" class="btn text-light btn-primary">Load File</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
