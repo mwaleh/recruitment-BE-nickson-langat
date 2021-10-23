@@ -1,5 +1,5 @@
 import csv, io
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Count, F, Sum, Avg
 from django.db.models.functions import ExtractYear, ExtractMonth, ExtractDay
 from django.http import JsonResponse
@@ -58,7 +58,7 @@ def upload_meters(request):
     for column in csv.reader(io_string, delimiter=',',):
         try:
             _, created=MeterData.objects.update_or_create(
-                bulding_id_id=column[0],
+                building_id=column[0],
                 id=column[1],
                 fuel=column[2],
                 unit=column[3]
@@ -86,20 +86,19 @@ def upload_hours(request):
         try:
             _, created=HalfHourData.objects.update_or_create(
                 consumption=column[0],
-                meter_id_id=column[1],
-                reading_date_time=column[2],
+                meter_id=column[1],
+                uploaded_at=column[2],
             )
         except ValueError:
             pass    
     return render(request, template, context)
 
-
-def pie_chart(request):
+def consumption_chart(request):
     labels = []
     data = []
     # queryset=HalfHourData.objects.all()[:9]
     
-    qs = HalfHourData.objects.values('meter_id__bulding_id__name').annotate(sum_consumption=Sum('consumption')).order_by('meter_id__bulding_id__name')[:25]
+    qs = HalfHourData.objects.values('meter__building_id__name').annotate(sum_consumption=Sum('consumption')).order_by('meter__building_id__name')[:25]
     
     # qs=queryset.annotate(day=ExtractDay('reading_date_time'))\
     #      .values('day').annotate(total=Sum('consumption')).values('day', 'total').order_by('day')
@@ -109,28 +108,10 @@ def pie_chart(request):
     #     data.append(float(x['total']))
 
     for x in qs:
-        labels.append(x['meter_id__bulding_id__name'])
+        labels.append(x['meter__building_id__name'])
         data.append(float(x['sum_consumption']))
         
-    return render(request, 'pie_chart.html', {
+    return render(request, 'chart.html', {
         'labels': labels,
         'data': data,
     })
-
-def stats(request):
-    return render(request, 'statistics.html')
-
-colorPalette = ['#00ccff ', '#ff33cc', '#ff0066', '#00ffcc', '#290066', '#ff3300', '#ffff00']
-colorPrimary, colorSuccess, colorDanger = '#79aec8', colorPalette[0], colorPalette[5]
-
-def generate_color_palette(amount):
-    palette = []
-
-    i = 0
-    while i < len(colorPalette) and len(palette) < amount:
-        palette.append(colorPalette[i])
-        i += 1
-        if i == len(colorPalette) and len(palette) < amount:
-            i = 0
-
-    return palette
