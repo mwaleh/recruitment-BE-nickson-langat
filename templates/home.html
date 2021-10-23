@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container">
-    
         <div class="row justify-content-center mt-5">
           <div class="col-lg-8 col-md-8">
     <table class="table caption-top">
@@ -11,7 +10,6 @@
             <th scope="col">BULDING ID</th>
             <th scope="col">BULDING NAME</th>
             <th scope="col">RELATED METER(click to view)</th>
-            
           </tr>
         </thead>
         <tbody>
@@ -44,13 +42,37 @@
                     </div>
                   </div>
                 {% endfor %}
-
             </td>
-            
           </tr>
           {% endfor %}
         </tbody>
       </table>
+      {% if buildings.has_other_pages %}
+      <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        {% if buildings.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ buildings.previous_page_number }}">Previous</a></li>
+        {% else %}
+          
+        {% endif %}
+        {% for i in buildings.paginator.page_range %}
+          {% if buildings.number == i %}
+          <li class="page-item active"><a class="page-link">{{ i }}</a></li>
+            
+          {% else %}
+          <li class="page-item "><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+           
+          {% endif %}
+        {% endfor %}
+        {% if buildings.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ buildings.next_page_number }}">Next</a></li>
+          
+        {% else %}
+         
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
           </div>
        
     </div>

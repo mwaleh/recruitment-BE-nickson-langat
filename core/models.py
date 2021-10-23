@@ -7,7 +7,7 @@ class Building(models.Model):
 
     def __str__(self) -> str:
         return str(self.id)
-
+        
     @property
     def meters(self):
         results=MeterData.objects.filter(building=self.id)

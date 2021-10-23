@@ -1,25 +1,36 @@
 import csv, io
-from django.shortcuts import get_object_or_404, redirect, render
-from django.db.models import Count, F, Sum, Avg
-from django.db.models.functions import ExtractYear, ExtractMonth, ExtractDay
+from django.shortcuts import render
+from django.db.models import Sum
+from django.db.models.functions import ExtractDay
 from django.http import JsonResponse
 from django.contrib import messages
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Building, HalfHourData, MeterData
+from .charts import generate_color_palette
 
 # Create your views here.
 def index(request):
-    buldings=Building.objects.all()
-    context={
-        'buildings':buldings
-    }
-    return render(request, 'home.html', context)
+    bulding_list=Building.objects.all()
+    page = request.GET.get('page', 1)
+
+    paginator = Paginator(bulding_list, 10)
+    try:
+        buildings = paginator.page(page)
+    except PageNotAnInteger:
+        buildings = paginator.page(1)
+    except EmptyPage:
+        buildings = paginator.page(paginator.num_pages)
+
+    return render(request, 'home.html', {'buildings':buildings})
+
+def statistics_view(request):
+    return render(request, 'statistics.html', {})
 
 def upload_building(request):
     template = "upload_buildings.html"
     context = {
         'order': 'Order of the CSV should be id,name',
               }
-
     if request.method == "GET":
         return render(request, template, context)
     csv_file = request.FILES['file']
@@ -39,14 +50,12 @@ def upload_building(request):
             pass    
     return render(request, template, context)
 
-
 def upload_meters(request):
     template = "upload_meters.html"
 
     context = {
         'order': 'Order of the CSV should be building_id,id,fuel,unit',
               }
-
     if request.method == "GET":
         return render(request, template, context)
     csv_file = request.FILES['file']
@@ -67,18 +76,16 @@ def upload_meters(request):
             pass    
     return render(request, template, context)
 
-
 def upload_hours(request):
     template = "upload_hours.html"
     context = {
         'order': 'Order of the CSV should be consumption,meter_id,reading_date_time'
     }
-
     if request.method == "GET":
         return render(request, template, context)
     csv_file = request.FILES['file']
     if not csv_file.name.endswith('.csv'):
-        messages.success(request, 'THIS IS NOT A CSV FILE')
+        messages.success('THIS IS NOT A CSV FILE')
     data_set = csv_file.read().decode('UTF-8')
     io_string = io.StringIO(data_set)
     next(io_string)
@@ -93,25 +100,38 @@ def upload_hours(request):
             pass    
     return render(request, template, context)
 
-def consumption_chart(request):
+def get_filter_options(request):
+    """
+    lists all the dates we have half hour records for
+    """
+    grouped_data = HalfHourData.objects.annotate(day=ExtractDay('uploaded_at')).values('day').order_by('day').distinct()
+    options = [data['day'] for data in grouped_data]
+
+    return JsonResponse({
+        'days': options,
+    })
+
+def consumption_per_house_chart(request, day):
     labels = []
     data = []
-    # queryset=HalfHourData.objects.all()[:9]
+    results = HalfHourData.objects.filter(uploaded_at__day=day)
+    qs=results.values('meter__building_id__name').annotate(sum_consumption=Sum('consumption')).order_by('meter__building_id__name')
     
-    qs = HalfHourData.objects.values('meter__building_id__name').annotate(sum_consumption=Sum('consumption')).order_by('meter__building_id__name')[:25]
-    
-    # qs=queryset.annotate(day=ExtractDay('reading_date_time'))\
-    #      .values('day').annotate(total=Sum('consumption')).values('day', 'total').order_by('day')
-   
-    # for x in qs:
-    #     labels.append(x['day'])
-    #     data.append(float(x['total']))
+    for item in qs:
+        labels.append(item['meter__building_id__name'])
+        data.append(float(item['sum_consumption']))
 
-    for x in qs:
-        labels.append(x['meter__building_id__name'])
-        data.append(float(x['sum_consumption']))
-        
-    return render(request, 'chart.html', {
-        'labels': labels,
-        'data': data,
+    return JsonResponse({
+        'title': f'Consumption per household on {day} in DEC 2018',
+        'data': {
+            'labels': labels,
+            'datasets': [{
+                'label': 'Consumption (Kwh)',
+                'backgroundColor': generate_color_palette(31),
+                'borderColor': generate_color_palette(5),
+                ' borderWidth':1,
+                'fill':False,
+                'data': data,
+            }]
+        },
     })

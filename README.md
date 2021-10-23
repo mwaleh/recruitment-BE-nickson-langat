@@ -37,5 +37,11 @@ DB_HOST="localhost or any other host name"
 - The main app is in the folder  `core`
 - I added an optional app `accounts` for auth purposes. It uses a custom user model.
 
+## FEATURES
+- Pagination on the buildings list to display 10 items per page
+- Unit tests to try and catch bugs early on. Run `python manage.py test` to have a go
+
 ## CONTAINERISATION AND DEPLOYMENT
 - Used Docker and hosted it on AWS
+
+
