@@ -1,9 +1,0 @@
-docker-compose down -v
-
-docker-compose build 
-
-docker-compose up -d
-
-docker-compose exec web python manage.py flush --no-input
-
-docker-compose run web python3 manage.py makemigrations
