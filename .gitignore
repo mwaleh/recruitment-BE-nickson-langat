@@ -68,6 +68,7 @@ media/
 .coverage.*
 .cache
 nosetests.xml
+commands.txt
 coverage.xml
 *.cover
 *.py,cover
