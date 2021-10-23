@@ -94,8 +94,8 @@ DATABASES = {
         'NAME': env('DB_NAME'),
         'USER': env('DB_USER'),
         'PASSWORD':env('DB_PASS'),
-        'HOST': 'db', # set in docker-compose.yml
-        'PORT': 5432 # default postgres port
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT')
     }
 }
 
