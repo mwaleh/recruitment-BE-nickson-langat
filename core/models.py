@@ -7,7 +7,7 @@ class Building(models.Model):
 
     def __str__(self) -> str:
         return str(self.id)
-        
+
     @property
     def meters(self):
         results=MeterData.objects.filter(building=self.id)
@@ -28,3 +28,10 @@ class HalfHourData(models.Model):
 
     def __str__(self) -> str:
         return str(self.id)
+
+class Sample(models.Model):
+    name=models.CharField(max_length=250)
+    file=models.FileField(upload_to='samples')
+
+    def __str__(self):
+        return str(self.name)

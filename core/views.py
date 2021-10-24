@@ -1,11 +1,13 @@
 import csv, io
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.db.models import Sum
 from django.db.models.functions import ExtractDay
 from django.http import JsonResponse
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import Building, HalfHourData, MeterData
+
+from core.forms import CSVForm
+from .models import Building, HalfHourData, MeterData, Sample
 from .charts import generate_color_palette
 
 # Create your views here.
@@ -28,15 +30,16 @@ def statistics_view(request):
 
 def upload_building(request):
     template = "upload_buildings.html"
+    sample=Sample.objects.get(name='buildings')
     context = {
-        'order': 'Order of the CSV should be id,name',
+        'sample':sample
               }
     if request.method == "GET":
         return render(request, template, context)
     csv_file = request.FILES['file']
-    print(csv_file.name)
     if not csv_file.name.endswith('.csv'):
-        messages.success(request, 'THIS IS NOT A CSV FILE')
+        messages.error(request, 'THIS IS NOT A CSV FILE')
+        return redirect('upload-buildings')
     data_set = csv_file.read().decode('UTF-8')
     io_string = io.StringIO(data_set)
     next(io_string)
@@ -47,20 +50,23 @@ def upload_building(request):
                 name=column[1],
             )
         except ValueError:
-            pass    
-    return render(request, template, context)
+            pass
+    messages.success(request, 'The data was saved successfully!')  
+    return redirect('/')
+    
 
 def upload_meters(request):
     template = "upload_meters.html"
-
+    sample=Sample.objects.get(name='meters')
     context = {
-        'order': 'Order of the CSV should be building_id,id,fuel,unit',
+        'sample':sample
               }
     if request.method == "GET":
         return render(request, template, context)
     csv_file = request.FILES['file']
     if not csv_file.name.endswith('.csv'):
-        messages.success(request, 'THIS IS NOT A CSV FILE')
+        messages.error(request, 'THIS IS NOT A CSV FILE')
+        return redirect('upload-meters')
     data_set = csv_file.read().decode('UTF-8')
     io_string = io.StringIO(data_set)
     next(io_string)
@@ -73,19 +79,22 @@ def upload_meters(request):
                 unit=column[3]
             )
         except ValueError:
-            pass    
-    return render(request, template, context)
+            pass
+    messages.success(request, 'The data was saved successfully!')    
+    return redirect('/')
 
 def upload_hours(request):
     template = "upload_hours.html"
+    sample=Sample.objects.get(name='consumption')
     context = {
-        'order': 'Order of the CSV should be consumption,meter_id,reading_date_time'
-    }
+        'sample':sample
+              }
     if request.method == "GET":
         return render(request, template, context)
     csv_file = request.FILES['file']
     if not csv_file.name.endswith('.csv'):
-        messages.success('THIS IS NOT A CSV FILE')
+        messages.error(request,'THIS IS NOT A CSV FILE')
+        return redirect('upload-hours')
     data_set = csv_file.read().decode('UTF-8')
     io_string = io.StringIO(data_set)
     next(io_string)
@@ -97,8 +106,9 @@ def upload_hours(request):
                 uploaded_at=column[2],
             )
         except ValueError:
-            pass    
-    return render(request, template, context)
+            pass
+    messages.success(request, 'The data was saved successfully!')      
+    return redirect('/')
 
 def get_filter_options(request):
     """

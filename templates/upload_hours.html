@@ -8,12 +8,19 @@
             
           <div class="card-title text-center border-bottom">
             <h2 class="p-3">UPLOAD CSV FILE</h2>
+            <a class="text-info" href="{{sample.file.url}}">Click to download sample csv</a>
           </div>
           <div class="card-body">
             <form action="" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-            <p class="text-info">{{order}}</p>
-            <br>
+                {% if messages %}
+        {% for message in messages %}
+            <div>
+<!--                | means OR operator-->
+                <strong class="text-danger">{{message|safe}}</strong>
+            </div>
+        {% endfor %}
+    {% endif %}
                 <label for="username" class="form-label">CSV FILE</label>
                 <input type="file" name="file" class="form-control" id="file" required />
               </div>

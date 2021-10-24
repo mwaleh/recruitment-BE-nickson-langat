@@ -13,14 +13,14 @@
           <div class="card-body">
             <form action="" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-                {% if messages %}
-                {% for message in messages %}
-                    <div>
-        <!--                | means OR operator-->
-                        <strong class="text-danger">{{message|safe}}</strong>
-                    </div>
-                {% endfor %}
-            {% endif %}
+                {% if form.file.errors %}
+   
+                    {% for error in form.file.errors %}
+                        <strong class="text-danger text-center">{{ error|escape }}</strong>
+                    {% endfor %}
+                    
+                {% endif %}
+               <br>
                 <label for="username" class="form-label">CSV FILE</label>
                 <input type="file" name="file" class="form-control" id="file" required />
               </div>
