@@ -10,9 +10,6 @@ __pycache__/
 *.so
 
 postgres
-Dockerfile
-docker-compose.yml
-.dockerignore
 employee.csv
 junit
 coverage_html_report

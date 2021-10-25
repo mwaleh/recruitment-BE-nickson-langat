@@ -5,8 +5,6 @@ from django.db.models.functions import ExtractDay
 from django.http import JsonResponse
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
-from core.forms import CSVForm
 from .models import Building, HalfHourData, MeterData, Sample
 from .charts import generate_color_palette
 

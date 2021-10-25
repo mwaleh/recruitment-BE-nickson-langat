@@ -43,5 +43,7 @@ DB_HOST="localhost or any other host name"
 
 ## CONTAINERISATION AND DEPLOYMENT
 - Used Docker and hosted it on AWS
+- You can build the spin up the docker containers by `docker-compose -f docker-compose.yml up --build `
+- Visit `localhost` to view the app running inside the container. 
 
 
