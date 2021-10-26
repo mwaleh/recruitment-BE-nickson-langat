@@ -27,16 +27,14 @@ env = environ.Env(
 # reading .env file
 environ.Env.read_env()
 
-# False if not in os.environ
-DEBUG = env('DEBUG')
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# False if not in os.environ
+DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = ['localhost','0.0.0.0', '18.191.244.15']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -94,7 +92,7 @@ DATABASES = {
         'NAME': env('DB_NAME'),
         'USER': env('DB_USER'),
         'PASSWORD':env('DB_PASS'),
-        'HOST': 'db',
+        'HOST': env('DB_HOST'),
         'PORT': env('DB_PORT')
     }
 }

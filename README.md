@@ -39,11 +39,18 @@ DB_HOST="localhost or any other host name"
 
 ## FEATURES
 - Pagination on the buildings list to display 10 items per page
+- Data visualisation using  [Chart Js](https://www.chartjs.org/)
 - Unit tests to try and catch bugs early on. Run `python manage.py test` to have a go
 
-## CONTAINERISATION AND DEPLOYMENT
-- Used Docker and hosted it on AWS
+## CONTAINERISATION
+- Used Docker 
 - You can build the spin up the docker containers by `docker-compose -f docker-compose.yml up --build `
 - Visit `localhost` to view the app running inside the container. 
+
+## DEPLOYMENT
+- Hosted it on AWS using ECS
+- To deploy create an ecs context using docker then run the compose application on Amazon ECS.
+- Check my sample here `http://ec2-18-191-244-15.us-east-2.compute.amazonaws.com/`
+
 
 
